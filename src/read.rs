@@ -107,8 +107,8 @@ fn parse_header(line: &str, line_number: usize) -> Result<ParsedItems> {
 }
 
 fn parse_remarks(line: &str, line_number: usize) -> Result<ParsedItems> {
-    ensure!(line.len() <= 80, format!("remarks is too long"));
-    let number = parse_usize(&line.chars().collect::<Vec<char>>(), line_number)?;
+    ensure!(line.len() <= 81, format!("remarks is too long"));
+    let number = parse_usize(&line.chars().collect::<Vec<char>>()[7..10], line_number)?;
     Ok(ParsedItems::Remark(
         number,
         line.get(11..).unwrap_or("").trim_end().to_owned(),
