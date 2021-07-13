@@ -2,7 +2,6 @@ use std::fmt;
 use std::cmp::Ordering;
 
 use getset::{CopyGetters, Getters, MutGetters, Setters};
-use anyhow::Result;
 
 use crate::validator;
 use crate::error::PDBError;
@@ -346,10 +345,19 @@ impl Ord for Atom {
 
 #[cfg(test)]
 mod tests {
-    //use super::Atom;
+    use super::Atom;
+    //use anyhow::Result;
     
     #[test]
-    fn it_works() {
-        assert_eq!(2 + 2, 4);
+    fn new_atom() {
+        let atom = Atom::new(false, 0, "", "", "", 0, 0.0, 0.0, 0.0, 0.0, 0.0, "", 0);
+        assert!(atom.is_some());
+    }
+
+    #[test]
+    fn test_set_name() {
+        let mut atom = Atom::new(false, 0, "", "", "", 0, 0.0, 0.0, 0.0, 0.0, 0.0, "", 0).unwrap();     
+        assert!(atom.set_name("O").is_ok());
+        assert!(atom.set_name("酸素").is_err());
     }
 }

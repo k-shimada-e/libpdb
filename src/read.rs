@@ -31,7 +31,7 @@ pub fn read_pdb_raw<T>(input: BufReader<T>) -> Result<PDB>
         if let Ok(result) = parse_result {
             match result {
                 ParsedItems::Header(_, _, idntifier) => pdb.set_identifier(&idntifier)?,
-                ParsedItems::Remark(remark_type, remark_text) => pdb.add_remarks(remark_type, &remark_text),
+                ParsedItems::Remark(remark_type, remark_text) => pdb.add_remarks(remark_type, &remark_text)?,
                 ParsedItems::Atom(
                     hetero,
                     serial_number,
@@ -107,7 +107,7 @@ fn parse_header(line: &str, line_number: usize) -> Result<ParsedItems> {
 }
 
 fn parse_remarks(line: &str, line_number: usize) -> Result<ParsedItems> {
-    ensure!(line.len() <= 81, format!("remarks is too long"));
+    ensure!(line.len() <= 80, format!("remarks is too long"));
     let number = parse_usize(&line.chars().collect::<Vec<char>>()[7..10], line_number)?;
     Ok(ParsedItems::Remark(
         number,
@@ -202,4 +202,21 @@ fn parse_usize(input: &[char], line_number: usize) -> Result<usize> {
     .collect::<String>();
 
     string.parse::<usize>().with_context(|| format!("can't parse the number as usize at line {}: {:?}", line_number, input))
+}
+
+
+#[cfg(test)]
+mod test {
+    use super::*;
+    #[test]
+    fn can_parse_f64() {
+        let chara: Vec<char> = "54.572".chars().collect();
+        assert_eq!(54.572 as f64, parse_f64(&chara, 1).unwrap());    
+    }
+
+    #[test]
+    fn can_parse_usize() {
+        let chara: Vec<char> = "1234".chars().collect();
+        assert_eq!(1234 as usize, parse_usize(&chara, 1).unwrap());
+    }
 }

@@ -42,14 +42,17 @@ impl PDB {
         self.remarks.iter()
     }
 
-    pub fn add_remarks(&mut self, remark_type: usize, remark_text: &str) {
+    pub fn add_remarks(&mut self, remark_type: usize, remark_text: &str) -> Result<(), PDBError> {
         if !REMARK_TYPES.contains(&remark_type) {
-            panic!("given remark-type is not valid: {}", remark_type)
+            return Err(PDBError::InvalidValue(
+                format!("given remark-type '{}' is not valid", remark_type)
+            ))
         }
         if remark_text.len() > 70 {
             panic!("given remark text is too long (>70)")
         }
         self.remarks.push((remark_type, remark_text.to_owned()));
+        Ok(())
     }
 
     pub fn atoms(&self) -> impl DoubleEndedIterator<Item = &Atom> + '_ {
@@ -67,9 +70,8 @@ impl PDB {
 }
 
 
-/// The valid remark type numbers as of PDB v3.30
-const REMARK_TYPES: [usize; 41] = [
+const REMARK_TYPES: [usize; 42] = [
     0, 1, 2, 3, 4, 5, 100, 200, 205, 210, 215, 217, 230, 240, 245, 247, 250, 265, 280, 285, 290,
-    300, 350, 375, 450, 465, 470, 475, 480, 500, 525, 600, 610, 615, 620, 630, 650, 700, 800, 900,
+    300, 350, 375, 400, 450, 465, 470, 475, 480, 500, 525, 600, 610, 615, 620, 630, 650, 700, 800, 900,
     999,
 ];
